@@ -18,7 +18,7 @@ class MazeGenerator:
         if seed is not None:
             random.seed(seed)
 
-        self.create_grid = self._create_grid(self.width, self.height)   
+        self.grid = self._create_grid(self.width, self.height)   
 
     def _create_grid(self,width_x: int, height_y: int) -> list[list[Cell]]:
         grid = []#erişim için grid[Y][X] önce satır sonra stun
