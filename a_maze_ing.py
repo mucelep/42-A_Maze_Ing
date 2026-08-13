@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 import random
+from dataclasses import dataclass
+
+
+@dataclass
+class Cell:
+    north: bool = True
+    east: bool = True
+    south: bool = True
+    west: bool = True
 
 
 def read_config_file() -> dict[str, int | str | bool | tuple[int, int]]:
@@ -91,6 +100,21 @@ def validate_config(config: dict[str, int | str | bool | tuple[int, int]]) -> No
     if not (0 <= exit_x < config["WIDTH"] and 0 <= exit_y < config["HEIGHT"]):
          raise ValueError(f"EXIT {config['EXIT']} is outside the maze bounds")
 
+#erişim için grid[Y][X] önce satır sonra stun
+def create_grid(width_x: int, height_y: int) -> list[list[Cell]]:
+    grid = []
+    
+    for y in range(height_y):# DIŞ döngü: kaç satır olacağını belirler (y = satır numarası)
+        row = []# DIŞ döngü: kaç satır olacağını belirler (y = satır numarası)
+        
+        for x in range(width_x): #her satırda width kadar eleman olustur
+            cell = Cell()
+            row.append(cell)# ve o satıra ekle
+            
+        grid.append(row)# sonra satırları grid de birlestir (satırlar listesi)
+
+    return grid
+            
 
 def main() -> None:
     try:
