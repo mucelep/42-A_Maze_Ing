@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from process_config import read_config_file
 from process_config import validate_config
-
+from mazegen import MazeGenerator
 
 def main() -> None:
     try:

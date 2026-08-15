@@ -18,9 +18,9 @@ class MazeGenerator:
         if seed is not None:
             random.seed(seed)
 
-        self.grid = self._create_grid(self.width_x, self.height_y)   
+        self.grid = self._create_grid()   
 
-    def _create_grid(self,) -> list[list[Cell]]:
+    def _create_grid(self) -> list[list[Cell]]:
         grid = []#erişim için grid[Y][X] önce satır sonra stun
         
         for y in range(self.height_y):# DIŞ döngü: kaç satır olacağını belirler (y = satır numarası)
@@ -77,7 +77,7 @@ class MazeGenerator:
         
         return neighbors
 
-    def _remove_wall(self, x: int, y: int, new_x: int, new_y, direction: str) -> None:
+    def _remove_wall(self, x: int, y: int, new_x: int, new_y: int, direction: str) -> None:
         current_cell: Cell = self.grid[y][x]
         neighbor_cell: Cell = self.grid[new_y][new_x]
 
