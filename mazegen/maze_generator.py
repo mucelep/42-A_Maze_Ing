@@ -10,7 +10,8 @@ class MazeGenerator:
             "W": (-1, 0),
         }
 
-    def __init__(self, width: int, height: int, seed: int | None = None):
+    def __init__(self,width: int, height: int,
+                perfect: bool = True, seed: int | None = None):
         self.width_x = width
         self.height_y = height
         self.seed = seed
@@ -18,8 +19,14 @@ class MazeGenerator:
         if seed is not None:
             random.seed(seed)
 
-        self.grid = self._create_grid()   
+        self.grid = self._create_grid()
 
+        if perfect:
+            self._generate_maze()
+        else:
+            self._generate_maze()
+            self._perfect_false()
+              
     def _create_grid(self) -> list[list[Cell]]:
         grid = []#erişim için grid[Y][X] önce satır sonra stun
         
@@ -54,8 +61,6 @@ class MazeGenerator:
                 stack.append((new_x, new_y))
             else:
                 stack.pop()
-
-
 
     def _get_unvisited_neighbors(
         self, x: int, y: int, visited: set[tuple[int, int]]
@@ -93,3 +98,27 @@ class MazeGenerator:
         elif direction == "W":
             current_cell.west = False
             neighbor_cell.east = False
+
+    def _perfect_false(self):
+        closed = self._get_closed_neighbors()
+        count = random.randint(range(2, (len(closed) // 3)))
+        choisen = random.sample(closed, count)
+        
+        for x, y, new_x, new_y, direction in choisen:
+            self._remove_wall(x, y, new_x, new_y, direction)
+            
+    def _get_closed_neighbors(self) -> list[tuple[int, int, int, int, str]]:
+        
+        closed : list[tuple[int, int, int, int, str]] = []
+        
+        for y in range(self.height_y):
+            for x in range(self.width_x):
+                cell = self.grid[y][x]
+                
+                if x + 1 < self.width_x and cell.east:# doğuda duvar varsa && + 1 doğuda hücre varsa
+                    closed.append((x, y, x + 1, y, "E"))# o anki cell in ve bir yandaki cell in kordinatlarını ekle
+                
+                if y + 1 < self.height_y and cell.south:
+                    closed.append((x, y, x, y + 1, "S"))
+        
+        return closed
