@@ -100,11 +100,11 @@ class MazeGenerator:
             neighbor_cell.east = False
 
     def _perfect_false(self):
-        closed = self._get_closed_neighbors()
-        count = random.randint(range(2, (len(closed) // 3)))
-        choisen = random.sample(closed, count)
+        closed: list[tuple[int, int, int, int, str]] = self._get_closed_neighbors()
+        count = max(1, int(len(closed) * 0.15))
+        chosen = random.sample(closed, count)
         
-        for x, y, new_x, new_y, direction in choisen:
+        for x, y, new_x, new_y, direction in chosen:
             self._remove_wall(x, y, new_x, new_y, direction)
             
     def _get_closed_neighbors(self) -> list[tuple[int, int, int, int, str]]:
