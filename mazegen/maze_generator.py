@@ -20,6 +20,7 @@ class MazeGenerator:
             random.seed(seed)
 
         self.grid = self._create_grid()
+        self.locked_cells = self._compute_42_pattern()
 
         if perfect:
             self._generate_maze()
@@ -49,7 +50,7 @@ class MazeGenerator:
         visited.add((start_x, start_y))
         stack = [(start_x, start_y)]
         while stack:
-            x, y = stack[-1]
+            x, y = stack[-1]#current elemanı stack in en son elemanı yapıyoruz
             
             neighbors = self._get_unvisited_neighbors(x, y, visited)
             
@@ -59,7 +60,7 @@ class MazeGenerator:
 
                 visited.add((new_x, new_y))
                 stack.append((new_x, new_y))
-            else:
+            else:#komşu yoksa bir önceki elemana dönüyor
                 stack.pop()
 
     def _get_unvisited_neighbors(
@@ -76,6 +77,9 @@ class MazeGenerator:
                 continue
             
             if (new_x, new_y) in visited:
+                continue
+            
+            if (new_x, new_y) in self.locked_cells:
                 continue
             
             neighbors.append((new_x, new_y, direction))
@@ -101,7 +105,7 @@ class MazeGenerator:
 
     def _perfect_false(self):
         closed: list[tuple[int, int, int, int, str]] = self._get_closed_neighbors()
-        count = max(1, int(len(closed) * 0.15))
+        count = max(2, int(len(closed) * 0.15))
         chosen = random.sample(closed, count)
         
         for x, y, new_x, new_y, direction in chosen:
@@ -115,6 +119,9 @@ class MazeGenerator:
             for x in range(self.width_x):
                 cell = self.grid[y][x]
                 
+                if (x, y) in self.locked_cells:
+                    continue
+                
                 if x + 1 < self.width_x and cell.east:# doğuda duvar varsa && + 1 doğuda hücre varsa
                     closed.append((x, y, x + 1, y, "E"))# o anki cell in ve bir yandaki cell in kordinatlarını ekle
                 
@@ -122,3 +129,39 @@ class MazeGenerator:
                     closed.append((x, y, x, y + 1, "S"))
         
         return closed
+
+    def _compute_42_pattern(self) -> set[tuple[int, int]]:
+        _DIGIT_4 = {
+        (0, 0), (0, 1), (0, 2), (1, 2), (2, 2), (2, 3), (2, 4),
+        }
+        _DIGIT_2 = {
+        (0, 0), (1, 0), (2, 0), (2, 1), (2, 2), (1, 2), (0, 2), (0, 3), (0, 4), (1, 4), (2, 4),
+        }
+
+        center_x = self.width_x // 2 # merkez_x için yarıya bölyüor 10 / 2 = 5
+        center_y = self.height_y // 2
+        digit_width = 3 
+        gap = 1
+
+        pattern_width = digit_width * 2 + gap# patern boyutu
+        pattern_height = 5 # uzunlugu
+        start_x = center_x - pattern_width // 2# baslangıc alanı hesaplıyor merkezden 3 birim sola 
+        start_y = center_y - pattern_height // 2# bu da 2 birim yukarıya
+
+        locked_cells = set()
+        for cx, cy in _DIGIT_4:
+            real_x = start_x + cx # digit 4 ü gezip baslangıc kordinatına ekliyor
+            real_y = start_y + cy
+            locked_cells.add((real_x, real_y))# bunu listede tutuyor
+        for cx, cy in _DIGIT_2:
+            real_x = start_x + digit_width + gap + cx#a aynısını 2 için yapyıor 2 = baslangıc + 4 + gap + cx
+            real_y = start_y + cy # gerek yok cunku yukarıdan assağı aynı 
+            locked_cells.add((real_x, real_y))
+        return locked_cells
+
+
+
+
+# yapılacaklar:
+# 42 yazılacak merkeze
+# perfect false bitmedi köşeleri ve merkezi garanti etmesi lazım ect.
