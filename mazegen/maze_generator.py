@@ -27,7 +27,7 @@ class MazeGenerator:
         else:
             self._generate_maze()
             self._perfect_false()
-              
+           
     def _create_grid(self) -> list[list[Cell]]:
         grid = []#erişim için grid[Y][X] önce satır sonra stun
         
@@ -105,30 +105,67 @@ class MazeGenerator:
 
     def _perfect_false(self):
         closed: list[tuple[int, int, int, int, str]] = self._get_closed_neighbors()
-        count = max(2, int(len(closed) * 0.15))
+        count = max(2, int(len(closed) * 0.20))
         chosen = random.sample(closed, count)
         
         for x, y, new_x, new_y, direction in chosen:
             self._remove_wall(x, y, new_x, new_y, direction)
-            
+
+        self._FBI_open_the_corner()
+        self._open_42()
+
     def _get_closed_neighbors(self) -> list[tuple[int, int, int, int, str]]:
-        
+
         closed : list[tuple[int, int, int, int, str]] = []
-        
+
         for y in range(self.height_y):
             for x in range(self.width_x):
                 cell = self.grid[y][x]
-                
-                if (x, y) in self.locked_cells:
+
+                if (x, y) in self.locked_cells:# kilitli ise gec 
                     continue
-                
-                if x + 1 < self.width_x and cell.east:# doğuda duvar varsa && + 1 doğuda hücre varsa
-                    closed.append((x, y, x + 1, y, "E"))# o anki cell in ve bir yandaki cell in kordinatlarını ekle
-                
+           
+                if x + 1 < self.width_x and cell.east:# x sınır duvarı mı and dogusunda duvar var mı
+                    if (x + 1, y) not in self.locked_cells: # duvarın karşı tarafı kilitli mi
+                        closed.append((x, y, x + 1, y, "E"))
+
                 if y + 1 < self.height_y and cell.south:
-                    closed.append((x, y, x, y + 1, "S"))
-        
+                    if (x, y + 1) not in self.locked_cells:
+                        closed.append((x, y, x, y + 1, "S"))
+
         return closed
+
+    def _FBI_open_the_corner(self):
+        self._remove_wall(0, 0, 1, 0, "E")
+        self._remove_wall(0, 0, 0, 1, "S")
+
+        self._remove_wall(
+            self.width_x -1, 0,
+            self.width_x -2, 0, "W"
+        )
+        self._remove_wall(
+            self.width_x - 1, 0,
+            self.width_x - 1, 1, "S"
+        )
+
+        self._remove_wall(
+            0, self.height_y - 1,
+            0, self.height_y - 2, "N"
+        )
+        self._remove_wall(
+            0, self.height_y - 1,
+            1, self.height_y -1, "E"
+        )
+
+        self._remove_wall(
+            self.width_x - 1, self.height_y -1,
+            self.width_x - 2, self.height_y -1, "W"
+        )
+
+        self._remove_wall(
+            self.width_x - 1, self.height_y -1,
+            self.width_x - 1, self.height_y -2, "N"
+        )
 
     def _compute_42_pattern(self) -> set[tuple[int, int]]:
         _DIGIT_4 = {
@@ -138,15 +175,16 @@ class MazeGenerator:
         (0, 0), (1, 0), (2, 0), (2, 1), (2, 2), (1, 2), (0, 2), (0, 3), (0, 4), (1, 4), (2, 4),
         }
 
-        center_x = self.width_x // 2 # merkez_x için yarıya bölyüor 10 / 2 = 5
-        center_y = self.height_y // 2
         digit_width = 3 
         gap = 1
-
         pattern_width = digit_width * 2 + gap# patern boyutu
         pattern_height = 5 # uzunlugu
-        start_x = center_x - pattern_width // 2# baslangıc alanı hesaplıyor merkezden 3 birim sola 
-        start_y = center_y - pattern_height // 2# bu da 2 birim yukarıya
+
+        start_x = (self.width_x - pattern_width) // 2 
+        #self_x-y / 2 ile merkezin uzunlugu buluyor 15//2=7
+        #paterni ortalamak için merkezlerini eşleştiriyor
+        #start = 7 - 3 = 4 | end = 4 + 7 den = 11 oluyor ve ortalandı
+        start_y = (self.height_y - pattern_height) // 2
 
         locked_cells = set()
         for cx, cy in _DIGIT_4:
@@ -157,11 +195,13 @@ class MazeGenerator:
             real_x = start_x + digit_width + gap + cx#a aynısını 2 için yapyıor 2 = baslangıc + 4 + gap + cx
             real_y = start_y + cy # gerek yok cunku yukarıdan assağı aynı 
             locked_cells.add((real_x, real_y))
+        
         return locked_cells
 
-
-
-
-# yapılacaklar:
-# 42 yazılacak merkeze
-# perfect false bitmedi köşeleri ve merkezi garanti etmesi lazım ect.
+    def _open_42(self):
+        start_x = (self.width_x - 7) // 2
+        start_y = (self.height_y - 5) // 2
+        gap_x = start_x + 3
+        
+        for y in range(start_y - 1, start_y + 5):
+            self._remove_wall(gap_x, y + 1, gap_x, y, "N")
