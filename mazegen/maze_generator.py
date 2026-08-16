@@ -103,6 +103,23 @@ class MazeGenerator:
             current_cell.west = False
             neighbor_cell.east = False
 
+    def _add_wall(self, x: int, y: int, new_x: int, new_y: int, direction: str) -> None:
+            current_cell: Cell = self.grid[y][x]
+            neighbor_cell: Cell = self.grid[new_y][new_x]
+
+            if direction == "N":
+                current_cell.north = True
+                neighbor_cell.south = True
+            elif direction == "S":
+                current_cell.south = True
+                neighbor_cell.north = True
+            elif direction == "E":
+                current_cell.east = True
+                neighbor_cell.west = True
+            elif direction == "W":
+                current_cell.west = True
+                neighbor_cell.east = True
+
     def _perfect_false(self):
         closed: list[tuple[int, int, int, int, str]] = self._get_closed_neighbors()
         count = max(2, int(len(closed) * 0.20))
@@ -111,8 +128,11 @@ class MazeGenerator:
         for x, y, new_x, new_y, direction in chosen:
             self._remove_wall(x, y, new_x, new_y, direction)
 
+            if self._has_open_3x3():# eger 3x3 gap olustuysa geri ekle
+                self._add_wall(x, y, new_x, new_y, direction)
+
         self._FBI_open_the_corner()
-        self._open_42()
+        self._open_42_corridor()
 
     def _get_closed_neighbors(self) -> list[tuple[int, int, int, int, str]]:
 
@@ -179,12 +199,10 @@ class MazeGenerator:
         gap = 1
         pattern_width = digit_width * 2 + gap# patern boyutu
         pattern_height = 5 # uzunlugu
-
-        start_x = (self.width_x - pattern_width) // 2 
-        #self_x-y / 2 ile merkezin uzunlugu buluyor 15//2=7
-        #paterni ortalamak için merkezlerini eşleştiriyor
-        #start = 7 - 3 = 4 | end = 4 + 7 den = 11 oluyor ve ortalandı
-        start_y = (self.height_y - pattern_height) // 2
+        center_x = self.width_x // 2
+        center_y = self.height_y // 2
+        start_x = center_x - pattern_width // 2
+        start_y = center_y - pattern_height // 2
 
         locked_cells = set()
         for cx, cy in _DIGIT_4:
@@ -198,10 +216,32 @@ class MazeGenerator:
         
         return locked_cells
 
-    def _open_42(self):
-        start_x = (self.width_x - 7) // 2
-        start_y = (self.height_y - 5) // 2
-        gap_x = start_x + 3
-        
+    def _open_42_corridor(self):
+        center_x = self.width_x // 2 # merkezi hesapliyor 10/2=5
+        patern_height = 5
+        start_y = (self.height_y - patern_height) // 2 # baslasngıc hesaplıyor 15-5 /2 = 5
+
         for y in range(start_y - 1, start_y + 5):
-            self._remove_wall(gap_x, y + 1, gap_x, y, "N")
+            self._remove_wall(center_x, y + 1, center_x, y, "N")
+
+    def _has_open_3x3(self) -> bool:
+        for start_y in range(self.height_y - 2):#  genislik 7 diyelim 3x kontrolü icin min
+            for start_x in range(self.width_x - 2):
+
+                # yatay bağlantılar
+                all_open = True
+                for row in range(start_y, start_y + 3):
+                    for col in range(start_x, start_x + 2):
+                        if self.grid[row][col].east:
+                            all_open = False
+
+                # dikey bağlantılar
+                for row in range(start_y, start_y + 2):
+                    for col in range(start_x, start_x + 3):
+                        if self.grid[row][col].south:
+                            all_open = False
+
+                if all_open:
+                    return True
+
+        return False
