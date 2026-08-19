@@ -11,7 +11,7 @@ class MazeGenerator:
         }
 
     def __init__(self,width: int, height: int,
-                entry_pos: tuple[int, int] = (0, 0), exit_pos: tuple[int, int] = None,
+                entry_pos: tuple[int, int] = (0, 0), exit_pos: tuple[int, int] | None = None,
                 perfect: bool = True, seed: int | None = None):
         self.width_x = width
         self.height_y = height
@@ -27,6 +27,9 @@ class MazeGenerator:
 
         self.grid = self._create_grid()
         self.locked_cells = self._compute_42_pattern()
+        
+        if self.entry_pos in self.locked_cells or self.exit_pos in self.locked_cells:
+            raise ValueError("ENTRY/EXIT cannot be inside the '42' pattern")
 
         if perfect:
             self._generate_maze()
@@ -49,7 +52,7 @@ class MazeGenerator:
         return grid
 
     def _generate_maze(self):
-        start_x, start_y = 0, 0
+        start_x, start_y = self.entry_pos # maze i örmeye entry den baslıyor
         visited: set[tuple[int, int]] = set()#gezilen hücrelerelerin kordinatları
         stack:   list[tuple[int, int]]#islem yaptıgımız hücrelerin yolu
         
@@ -128,14 +131,29 @@ class MazeGenerator:
 
     def _perfect_false(self):
         closed: list[tuple[int, int, int, int, str]] = self._get_closed_neighbors()
-        count = max(2, int(len(closed) * 0.20))
-        chosen = random.sample(closed, count)
+        random.shuffle(closed)
+
+
+        max_loops = max(2, int(len(closed) * 0.20))
+        min_loops = 2
+        success_count = 0
         
-        for x, y, new_x, new_y, direction in chosen:
+        for x, y, new_x, new_y, direction in closed:
+            if success_count >= max_loops:
+                break
+            
             self._remove_wall(x, y, new_x, new_y, direction)
 
             if self._has_open_3x3():# eger 3x3 gap olustuysa geri ekle
                 self._add_wall(x, y, new_x, new_y, direction)
+            else:
+                success_count += 1
+        
+        if success_count < min_loops:
+            raise ValueError(
+                "Could not open enough loops for PERFECT=False; "
+                "maze may be too small or too constrained"
+            )
 
         self._FBI_open_the_corner()
         self._open_42_corridor()
