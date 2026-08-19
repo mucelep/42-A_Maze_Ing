@@ -52,6 +52,8 @@ if __name__ == "__main__":
 # #     maze = MazeGenerator(
 # #         config["WIDTH"],
 # #         config["HEIGHT"],
+# #         config["ENTRY"],
+# #         config["EXIT"],
 # #         config["PERFECT"],
 # #         config["SEED"]
 # #     )
