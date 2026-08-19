@@ -1,8 +1,0 @@
-
-
-
-
-EKSİKLER:
-
-1- read config direkt olarak read(config.txt) okuyor ama config.txt nin argüman olarak verilmesi lazım
-argv[1] i okuyacak bulamazsa hata vericek
