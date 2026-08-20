@@ -5,8 +5,8 @@ from .cell import Cell
 class MazeGenerator:
     _DIRECTIONS = {
             "N": (0, -1),
-            "S": (0, 1),
             "E": (1, 0),
+            "S": (0, 1),
             "W": (-1, 0),
         }
 
@@ -36,7 +36,7 @@ class MazeGenerator:
         else:
             self._generate_maze()
             self._perfect_false()
-           
+
     def _create_grid(self) -> list[list[Cell]]:
         grid = []#erişim için grid[Y][X] önce satır sonra stun
         
@@ -45,8 +45,7 @@ class MazeGenerator:
             
             for x in range(self.width_x): #her satırda width kadar eleman olustur
                 cell = Cell()
-                row.append(cell)# ve o satıra ekle
-                
+                row.append(cell)# ve o satıra ekle          
             grid.append(row)# sonra satırları grid de birlestir (satırlar listesi)
 
         return grid
@@ -156,7 +155,8 @@ class MazeGenerator:
             )
 
         self._FBI_open_the_corner()
-        self._open_42_corridor()
+        if self.locked_cells:
+            self._open_42_corridor()
 
     def _get_closed_neighbors(self) -> list[tuple[int, int, int, int, str]]:
 
@@ -180,36 +180,37 @@ class MazeGenerator:
         return closed
 
     def _FBI_open_the_corner(self):
-        self._remove_wall(0, 0, 1, 0, "E")
-        self._remove_wall(0, 0, 0, 1, "S")
+        if self.width_x > 1:
+            self._remove_wall(0, 0, 1, 0, "E")#sağ üst
+            self._remove_wall(0, 0, 0, 1, "S")
 
-        self._remove_wall(
-            self.width_x -1, 0,
-            self.width_x -2, 0, "W"
-        )
-        self._remove_wall(
-            self.width_x - 1, 0,
-            self.width_x - 1, 1, "S"
-        )
+            self._remove_wall( #sol üst
+                self.width_x - 1, 0,
+                self.width_x - 2, 0, "W"
+            )
+            self._remove_wall(
+                self.width_x - 1, 0,
+                self.width_x - 1, 1, "S"
+            )
 
-        self._remove_wall(
-            0, self.height_y - 1,
-            0, self.height_y - 2, "N"
-        )
-        self._remove_wall(
-            0, self.height_y - 1,
-            1, self.height_y -1, "E"
-        )
+            self._remove_wall(# sol alt
+                0, self.height_y - 1,
+                0, self.height_y - 2, "N"
+            )
+            self._remove_wall(
+                0, self.height_y - 1,
+                1, self.height_y -1, "E"
+            )
 
-        self._remove_wall(
-            self.width_x - 1, self.height_y -1,
-            self.width_x - 2, self.height_y -1, "W"
-        )
+            self._remove_wall(# sağ alt
+                self.width_x - 1, self.height_y -1,
+                self.width_x - 2, self.height_y -1, "W"
+            )
 
-        self._remove_wall(
-            self.width_x - 1, self.height_y -1,
-            self.width_x - 1, self.height_y -2, "N"
-        )
+            self._remove_wall(
+                self.width_x - 1, self.height_y -1,
+                self.width_x - 1, self.height_y -2, "N"
+            )
 
     def _compute_42_pattern(self) -> set[tuple[int, int]]:
         _DIGIT_4 = {
@@ -229,6 +230,11 @@ class MazeGenerator:
         start_y = center_y - pattern_height // 2
 
         locked_cells = set()
+        
+        if pattern_width > self.width_x or pattern_height > self.height_y:
+            print("Maze is too small to fit the '42' pattern")
+            return locked_cells
+        
         for cx, cy in _DIGIT_4:
             real_x = start_x + cx # digit 4 ü gezip baslangıc kordinatına ekliyor
             real_y = start_y + cy
@@ -245,7 +251,7 @@ class MazeGenerator:
         patern_height = 5
         start_y = (self.height_y - patern_height) // 2 # baslasngıc hesaplıyor 15-5 /2 = 5
 
-        for y in range(start_y - 1, start_y + 5):
+        for y in range(start_y - 1, start_y + 6):
             self._remove_wall(center_x, y + 1, center_x, y, "N")
 
     def _has_open_3x3(self) -> bool:
