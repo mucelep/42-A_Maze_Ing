@@ -36,9 +36,12 @@ def maze_slover(maze: MazeGenerator) -> str:
     path: list[str] = []
     cell = exit_pos
     while cell != entry_pos:
-        child_cell, dir = came_from[cell]#exitten baslayarak cocuguna bak
+        if cell not in came_from:
+            return "" # yol bulunamadı
+
+        parent_cell, dir = came_from[cell]#exitten baslayarak cocuguna bak
         path.append(dir)#yönü tut
-        cell = child_cell# cocuga geç onun nerden geldigine bak
+        cell = parent_cell# cocuga geç onun nerden geldigine bak
         # exitten entry e gidiş yolunu görüyosun
 
     path.reverse()
