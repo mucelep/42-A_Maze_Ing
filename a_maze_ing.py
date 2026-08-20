@@ -27,21 +27,24 @@
 #             line += "+"
 #         print(line)
 
-
 # if __name__ == "__main__":
-#     gen = MazeGenerator(width=15, height=9, perfect=True)
-#     print("=== PERFECT=True (15x9, seed=1) ===\n")
-#     print_maze_ascii(gen)
+#     try:
+#         gen = MazeGenerator(width=20, height=15, perfect=True)
+#         print("=== PERFECT=True (20x15, seed=1) ===\n")
+#         print_maze_ascii(gen)
 
-#     print("\n\n=== PERFECT=False (15x9, seed=1) ===\n")
-#     gen2 = MazeGenerator(width=15, height=11, perfect=False)
-#     print_maze_ascii(gen2)
+#         print("\n\n=== PERFECT=False (20x15, seed=1) ===\n")
+#         gen2 = MazeGenerator(width=20, height=15, perfect=False)
+#         print_maze_ascii(gen2)
+#     except (ValueError, FileNotFoundError) as e:
+#         print(f"[ERROR] {e}")
+        
 
 
-#!/usr/bin/env python3
+
 from process_config import read_config_file
 from process_config import validate_config
-from mazegen import MazeGenerator
+from mazegen import MazeGenerator, maze_slover
 import sys
 
 
@@ -53,17 +56,21 @@ def main() -> None:
     try:
         config = read_config_file(sys.argv[1])
         validate_config(config)
+
+        maze = MazeGenerator(
+        config["WIDTH"], config["HEIGHT"],
+        config["ENTRY"], config["EXIT"],
+        config["PERFECT"], config["SEED"]
+        )
+
+        path: str = maze_slover(maze)
+        print(path)
+        
     except (ValueError, FileNotFoundError) as e:
         print(f"[ERROR] - {e}")
         sys.exit(1)
-    maze = MazeGenerator(
-        config["WIDTH"],
-        config["HEIGHT"],
-        config["ENTRY"],
-        config["EXIT"],
-        config["PERFECT"],
-        config["SEED"]
-    )
+
     
 if __name__ == "__main__":
     main()
+
