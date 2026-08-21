@@ -44,7 +44,7 @@
 
 from process_config import read_config_file
 from process_config import validate_config
-from mazegen import MazeGenerator, maze_slover
+from mazegen import MazeGenerator, maze_slover, grid_to_binary
 import sys
 
 
@@ -66,6 +66,10 @@ def main() -> None:
         path: str = maze_slover(maze)
         print(path)
         
+        print()
+        
+        binary = grid_to_binary(maze)
+        print(binary[0])
     except (ValueError, FileNotFoundError) as e:
         print(f"[ERROR] - {e}")
         sys.exit(1)

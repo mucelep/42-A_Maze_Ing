@@ -46,7 +46,7 @@ def maze_slover(maze: MazeGenerator) -> str:
 
     path.reverse()
     return "".join(path)
-                
+ 
 #geçilebilir yönlerin listesini döndürür baba handmade   
 def is_wall(x: int, y: int, dir: str,maze: MazeGenerator) -> bool:
         cell = maze.grid[y][x]
