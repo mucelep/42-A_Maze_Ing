@@ -1,7 +1,7 @@
 from .maze_generator import MazeGenerator
 
 
-def grid_to_binary(maze: MazeGenerator) -> list[str]:
+def maze_to_hex(maze: MazeGenerator) -> list[str]:
     grid = maze.grid
 
     output: str = ""

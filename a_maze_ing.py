@@ -44,7 +44,7 @@
 
 from process_config import read_config_file
 from process_config import validate_config
-from mazegen import MazeGenerator, maze_slover, grid_to_binary
+from mazegen import MazeGenerator, maze_slover, maze_to_hex
 import sys
 
 
@@ -68,7 +68,7 @@ def main() -> None:
         
         print()
         
-        binary = grid_to_binary(maze)
+        binary = maze_to_hex(maze)
         print(binary)
         
         
