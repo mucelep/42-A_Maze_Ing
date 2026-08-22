@@ -44,7 +44,7 @@
 
 from process_config import read_config_file
 from process_config import validate_config
-from mazegen import MazeGenerator, maze_slover, maze_to_hex
+from mazegen import MazeGenerator, output_maze, maze_slover
 import sys
 
 
@@ -64,14 +64,8 @@ def main() -> None:
         )
 
         path: str = maze_slover(maze)
-        print(path)
-        
-        print()
-        
-        binary = maze_to_hex(maze)
-        print(binary)
-        
-        
+        output_maze(maze, config["OUTPUT_FILE"], path)
+
         
     except (ValueError, FileNotFoundError) as e:
         print(f"[ERROR] - {e}")

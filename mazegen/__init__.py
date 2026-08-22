@@ -1,9 +1,9 @@
 from .maze_generator import MazeGenerator
+from .output import output_maze
 from .maze_slover import maze_slover
-from .maze_to_hex import maze_to_hex
 
 __all__ = [
     "MazeGenerator",
     "maze_slover",
-    "maze_to_hex",
+    "output_maze",
 ]
