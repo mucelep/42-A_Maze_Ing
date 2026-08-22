@@ -1,5 +1,5 @@
-from .maze_generator import MazeGenerator
-from .maze_to_hex import maze_to_hex
+from mazegen import MazeGenerator
+from mazegen import maze_to_hex
 
 
 
@@ -10,4 +10,3 @@ def output_maze(maze: MazeGenerator, file_name: str, path: str) -> None:
         f.write(f"{maze.entry_pos[0]}, {maze.entry_pos[1]}\n")
         f.write(f"{maze.exit_pos[0]}, {maze.exit_pos[1]}\n")
         f.write(f"{path}\n")
-

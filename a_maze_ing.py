@@ -41,10 +41,10 @@
         
 
 
-
+from output import output_maze
 from process_config import read_config_file
 from process_config import validate_config
-from mazegen import MazeGenerator, output_maze, maze_slover
+from mazegen import MazeGenerator, maze_slover
 import sys
 
 
