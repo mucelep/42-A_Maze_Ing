@@ -69,7 +69,10 @@ def main() -> None:
         print()
         
         binary = grid_to_binary(maze)
-        print(binary[0])
+        print(binary)
+        
+        
+        
     except (ValueError, FileNotFoundError) as e:
         print(f"[ERROR] - {e}")
         sys.exit(1)
