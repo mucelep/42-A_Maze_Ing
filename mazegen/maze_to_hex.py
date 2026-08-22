@@ -8,24 +8,18 @@ def grid_to_binary(maze: MazeGenerator) -> list[str]:
     for y in range(maze.height_y):
         for x in range(maze.width_x):
             hex_maze: str = ""
+            value = 0
             cell = grid[y][x]
+
             if not cell.west:
-                hex_maze += "0"
-            else:
-                hex_maze += "1"
+                value |= 1 << 3
             if not cell.south:
-                hex_maze += "0"
-            else:
-                hex_maze += "1"
+                value |= 1 << 2
             if not cell.east:
-                hex_maze += "0"
-            else:
-                hex_maze += "1"
+                value |= 1 << 1
             if not cell.north:
-                hex_maze += "0"
-            else:
-                hex_maze += "1"
-            value = int(hex_maze, 2)
+                value |= 1 << 0
+
             output += (format(value, "x"))
         output += "\n"
     return output
