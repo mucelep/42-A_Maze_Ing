@@ -90,32 +90,49 @@ Example:
 | `PERFECT` | Enables or disables perfect maze generation |
 | `SEED` | Seed used for reproducible generation |
 
-Additional parameters:
-
-    [TODO: ADD IF APPLICABLE]
+No additional configuration keys are currently supported beyond the ones listed above.
 
 ## Maze Generation
 
 ### Algorithm
 
-We use **[ALGORITHM NAME]** to generate the maze.
+We use a **recursive backtracker** (randomized iterative depth-first search) to carve
+the base maze, then a **braiding pass** to turn it into a playable board when
+`PERFECT=False`.
 
 The algorithm works by:
 
-1. [SHORT DESCRIPTION]
-2. [SHORT DESCRIPTION]
-3. [SHORT DESCRIPTION]
+1. Starting from the entry cell, push it onto a stack and mark it visited.
+2. While the stack is not empty, look at the cell on top of the stack. If it has an
+   unvisited neighbour (and that neighbour isn't part of the reserved `42` pattern),
+   knock down the wall between them, mark the neighbour visited and push it.
+3. If the current cell has no unvisited neighbour, pop it off the stack and backtrack.
+
+This always produces a **perfect maze**: every cell reachable, exactly one path
+between any two cells, no loops.
+
+When `PERFECT=False`, we then:
+
+- Randomly remove a batch of the remaining interior walls to create loops, rejecting
+  any removal that would open up a 3x3 (or larger) empty area.
+- Force the four corners and the centre cell open, as required for the Pac-Man-style
+  board.
+- Run a braiding pass that removes one wall from each dead end (again rejecting moves
+  that create a 3x3 open area) until at most two dead ends remain.
 
 ### Why This Algorithm?
 
-We chose `[ALGORITHM NAME]` because:
+We chose the recursive backtracker because:
 
-- [REASON]
-- [REASON]
-- [REASON]
-
-It provides the properties required by the project while being suitable for random
-and reproducible maze generation.
+- It is simple to implement iteratively with an explicit stack, so it can't blow the
+  recursion limit on large mazes.
+- It naturally produces a perfect maze (single path, full connectivity) in one pass,
+  which is exactly what `PERFECT=True` requires.
+- Driving `random.choice`/`random.shuffle` from a single seeded `random.seed(seed)`
+  call makes the whole generation deterministic and reproducible.
+- Starting from a perfect maze and selectively re-opening walls (braiding) is a
+  straightforward way to reach the `PERFECT=False` requirements (loops, rare dead
+  ends, no 3x3 open areas) without a second, unrelated algorithm.
 
 ## Maze Modes
 
@@ -154,75 +171,106 @@ The output contains:
 
 The shortest path uses `N`, `E`, `S` and `W`.
 
-Example:
+Example (4x2 maze):
 
-    [MAZE DATA]
+    913955
+    ac2a91
 
-    0,0
-    19,14
+    3,5
+    25,20
     EESSENNE...
 
 ## Visualization
 
-The generated maze is displayed using **[ASCII / GRAPHICAL INTERFACE]**.
+The generated maze is displayed as **ANSI-coloured ASCII art in the terminal**
+(each cell rendered as a 2x2 block of coloured spaces).
 
 The visualization shows:
 
 - Maze walls
-- Entry and exit
-- The `42` pattern
-- The shortest path
+- Entry (purple) and exit (red)
+- The `42` pattern (grey)
+- The shortest path, when toggled on (blue)
 
 ### Controls
 
-| Key | Action |
-|---|---|
-| `[KEY]` | Regenerate maze |
-| `[KEY]` | Show/hide solution |
-| `[KEY]` | Change wall colour |
-| `[KEY]` | Exit |
+The program shows a numbered menu after each render:
 
-[TODO: Replace with the actual controls.]
+| Choice | Action |
+|---|---|
+| `1` | Re-generate a new maze (same config, new random layout) |
+| `2` | Show / hide the shortest path |
+| `3` | Rotate the wall colour (white → gold → sky blue → mint green) |
+| `4` | Quit |
 
 ## Path Finding
 
-The program calculates a shortest path from the entry to the exit using
-**[BFS / ALGORITHM]**.
+The program calculates a shortest path from the entry to the exit using a
+**breadth-first search (BFS)**.
 
-The algorithm only allows movement through open neighbouring cells and returns
-the result using `N`, `E`, `S` and `W`.
+Starting from the entry cell, it explores neighbouring cells in FIFO order, only
+through walls that are open, and records for each visited cell which direction it
+was reached from. Once the exit is dequeued, the path is rebuilt by walking these
+"came from" links back to the entry and reversed, giving the result as a string of
+`N`, `E`, `S` and `W` moves. BFS guarantees the shortest path because it expands
+cells in order of distance from the entry.
 
 ## Reusable Maze Generator
 
-The maze-generation logic is separated into a reusable module.
+The maze-generation logic is separated into a standalone package, `mazegen/`, with
+no dependency on the CLI, config parser or visualizer — it can be imported and used
+on its own in any Python project.
 
-The main class is `MazeGenerator`.
+The main class is `MazeGenerator`. Generation happens immediately when the object is
+constructed (there is no separate `generate()` call).
 
 Example usage:
 
-    from mazegen import MazeGenerator
+    from mazegen import MazeGenerator, maze_slover, maze_to_hex
 
     generator = MazeGenerator(
         width=20,
         height=15,
-        seed=42
+        entry_pos=(0, 0),
+        exit_pos=(19, 14),
+        perfect=True,
+        seed=42,
     )
 
-    generator.generate()
+    # the maze is already generated at this point
 
-    maze = generator.get_maze()
-    solution = generator.get_solution()
+Passing custom parameters:
 
-[TODO: Adapt this example to the actual API.]
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `width` | `int` | required | number of columns |
+| `height` | `int` | required | number of rows |
+| `entry_pos` | `tuple[int, int]` | `(0, 0)` | entry cell coordinates |
+| `exit_pos` | `tuple[int, int] \| None` | `(width - 1, height - 1)` | exit cell coordinates |
+| `perfect` | `bool` | `True` | single-path maze vs. playable board with loops |
+| `seed` | `int \| None` | `None` | seed for `random`, for reproducible output |
+
+Accessing the generated structure:
+
+    # grid[y][x] is a Cell with .north / .east / .south / .west booleans
+    # (True = wall closed, False = wall open / passage)
+    cell = generator.grid[0][0]
+
+    # hexadecimal wall-encoding of the whole grid, one row per line
+    hex_maze = maze_to_hex(generator)
+
+Accessing a solution:
+
+    # shortest entry -> exit path as a string of "N"/"E"/"S"/"W" moves
+    solution = maze_slover(generator)
 
 The generator allows users to:
 
-- Define maze dimensions
-- Set a seed
-- Choose generation options
-- Generate a maze
-- Access the generated maze
-- Access a solution
+- Define maze dimensions, entry and exit cells
+- Set a seed for reproducible generation
+- Choose perfect vs. playable-board generation
+- Access the generated cell grid directly
+- Get the shortest solution path and the hexadecimal encoding via helper functions
 
 The reusable module is packaged as:
 
@@ -233,27 +281,35 @@ The repository contains everything required to rebuild the package.
 ## Project Structure
 
     .
-    ├── a_maze_ing.py
-    ├── config.txt
+    ├── a_maze_ing.py         # entry point, wires config -> generator -> output -> visualizer
+    ├── config.txt             # default configuration file
+    ├── output.py               # writes the hex grid + entry/exit/path to OUTPUT_FILE
+    ├── maze_analyzer.py        # provided analysis/validation script
     ├── Makefile
     ├── README.md
     ├── LICENSE.md
-    ├── requirements.txt
+    ├── .gitignore
     ├── pyproject.toml
-    ├── mazegen/
+    ├── mazegen/                # reusable, standalone package
     │   ├── __init__.py
-    │   └── [generator files]
-    ├── [visualization files]
-    └── tests/
-
-[TODO: Update this to match the final project structure.]
+    │   ├── cell.py              # Cell dataclass (north/east/south/west walls)
+    │   ├── maze_generator.py    # MazeGenerator class (recursive backtracker + braiding)
+    │   ├── maze_slover.py       # maze_slover(): BFS shortest path
+    │   └── maze_to_hex.py       # maze_to_hex(): hexadecimal wall encoding
+    ├── process_config/         # config file parsing and validation
+    │   ├── __init__.py
+    │   ├── read_config.py
+    │   └── validate_config.py
+    └── visualizer/              # terminal ASCII rendering + interactive menu
+        ├── __init__.py
+        └── visualizer.py
 
 ## Team & Project Management
 
 | Member | Role |
 |---|---|
-| [NAME] | [ROLE] |
-| [NAME] | [ROLE] |
+| Muhammed Ömer Celep (mucelep) | [TODO: your role] |
+| Batuhan Fatih Kumcu (bakumcu) | [Visualizer, readme, license, makefile, etc...] |
 
 ### Planning
 
@@ -309,13 +365,12 @@ All generated suggestions were reviewed and tested by the team before being used
 
 ## Resources
 
-- A-Maze-ing Project Subject
+- A-Maze-ing Project Subject (42 curriculum)
 - Python Documentation: https://docs.python.org/3/
-- [Maze Algorithm Reference]
-- [Path Finding Reference]
-- flake8 Documentation: https://flake8.pycqa.org/
-- mypy Documentation: https://mypy.readthedocs.io/
-- [Other resources used]
+- Maze generation algorithms overview: https://en.wikipedia.org/wiki/Maze_generation_algorithm
+- Recursive backtracker walkthrough: https://weblog.jamisbuck.org/2010/12/27/maze-generation-recursive-backtracking
+- Breadth-first search: https://en.wikipedia.org/wiki/Breadth-first_search
+- Python Packaging User Guide (building the `mazegen` wheel): https://packaging.python.org/
 
 ## License
 
@@ -326,8 +381,8 @@ The selected license permits reuse and distribution of the generator.
 
 ## Authors
 
-**[NAME]** — [LOGIN]
+**Muhammed Ömer Celep** — mucelep
 
-**[NAME]** — [LOGIN]
+**Batuhan Fatih Kumcu** — bakumcu
 
 42 School
