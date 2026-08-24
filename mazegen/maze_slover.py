@@ -10,7 +10,7 @@ def maze_slover(maze: MazeGenerator) -> str:
     came_from: dict[tuple[int, int], tuple[tuple[int, int], str]] = {} # hangi cell e hangi cell den geldigimizi
     #exit bulundugunda tüm yolların bir önceki yolunu tutuyor
     while queue:
-        
+
         current_cell = queue.pop(0)# işlem yaptıgımız hücreyi cıkarıyoruz
         curr_x, curr_y = current_cell
             
@@ -20,7 +20,7 @@ def maze_slover(maze: MazeGenerator) -> str:
         for dir, (x, y) in maze._DIRECTIONS.items(): # tüm yönlere geziyoruz
             new_x = curr_x + x
             new_y = curr_y + y
-        
+
             if not 0 <= new_x < maze.width_x or not 0 <= new_y < maze.height_y:
                 continue# yeni yön sınır dışı mı
             if is_wall(curr_x, curr_y, dir, maze):

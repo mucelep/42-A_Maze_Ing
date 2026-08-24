@@ -31,13 +31,13 @@ def read_config_file(filename: str) -> dict[str, int | str | bool | tuple[int, i
 
                 elif key in ("ENTRY", "EXIT"):
                     try:
-                            x, y = value.split(",")
-                            value = (int(x), int(y))
+                        x, y = value.split(",")
+                        value = (int(x), int(y))
                     except ValueError:
                         raise ValueError(
                             f"{key} must be in the format x,y with integer coordinates"
                         )
-                    
+
                 elif key == "SEED":
                     try:
                         value = int(value)

@@ -2,7 +2,6 @@ from mazegen import MazeGenerator
 from mazegen import maze_to_hex
 
 
-
 def output_maze(maze: MazeGenerator, file_name: str, path: str) -> None:
     with open(file_name, "w") as f:
         f.write(maze_to_hex(maze))

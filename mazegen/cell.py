@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-@dataclass # struct gibi kullanım için ve print edebiliyorsun
+@dataclass
 class Cell:
     north: bool = True
     east: bool = True
