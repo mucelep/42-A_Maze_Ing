@@ -1,4 +1,8 @@
+from collections.abc import Callable
+
 from mazegen import MazeGenerator, maze_slover
+
+ConfigDict = dict[str, int | str | bool | tuple[int, int]]
 
 RESET = "\033[0m"
 
@@ -85,7 +89,10 @@ def render_maze(
     return "\n".join(lines)
 
 
-def run_menu(build_maze, config: dict) -> None:
+def run_menu(
+    build_maze: Callable[[ConfigDict], MazeGenerator],
+    config: ConfigDict,
+) -> None:
     gen = build_maze(config)
     show_path = False
     wall_idx = 0
