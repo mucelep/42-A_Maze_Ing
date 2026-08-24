@@ -181,7 +181,7 @@ class MazeGenerator:
 
     def _FBI_open_the_corner(self):
         if self.width_x > 1:
-            self._remove_wall(0, 0, 1, 0, "E")#sağ üst
+            self._remove_wall(0, 0, 1, 0, "E") #sağ üst
             self._remove_wall(0, 0, 0, 1, "S")
 
             self._remove_wall( #sol üst
@@ -193,7 +193,7 @@ class MazeGenerator:
                 self.width_x - 1, 1, "S"
             )
 
-            self._remove_wall(# sol alt
+            self._remove_wall( # sol alt
                 0, self.height_y - 1,
                 0, self.height_y - 2, "N"
             )
@@ -202,7 +202,7 @@ class MazeGenerator:
                 1, self.height_y -1, "E"
             )
 
-            self._remove_wall(# sağ alt
+            self._remove_wall( # sağ alt
                 self.width_x - 1, self.height_y -1,
                 self.width_x - 2, self.height_y -1, "W"
             )
@@ -222,7 +222,7 @@ class MazeGenerator:
 
         digit_width = 3 
         gap = 1
-        pattern_width = digit_width * 2 + gap# patern boyutu
+        pattern_width = digit_width * 2 + gap # patern boyutu
         pattern_height = 5 # uzunlugu
         center_x = self.width_x // 2
         center_y = self.height_y // 2
@@ -238,9 +238,9 @@ class MazeGenerator:
         for cx, cy in _DIGIT_4:
             real_x = start_x + cx # digit 4 ü gezip baslangıc kordinatına ekliyor
             real_y = start_y + cy
-            locked_cells.add((real_x, real_y))# bunu listede tutuyor
+            locked_cells.add((real_x, real_y)) # bunu listede tutuyor
         for cx, cy in _DIGIT_2:
-            real_x = start_x + digit_width + gap + cx#a aynısını 2 için yapyıor 2 = baslangıc + 4 + gap + cx
+            real_x = start_x + digit_width + gap + cx #a aynısını 2 için yapyıor 2 = baslangıc + 4 + gap + cx
             real_y = start_y + cy # gerek yok cunku yukarıdan assağı aynı 
             locked_cells.add((real_x, real_y))
         
@@ -255,7 +255,7 @@ class MazeGenerator:
             self._remove_wall(center_x, y + 1, center_x, y, "N")
 
     def _has_open_3x3(self) -> bool:
-        for start_y in range(self.height_y - 2):#  genislik 7 diyelim 3x kontrolü icin min
+        for start_y in range(self.height_y - 2): #  genislik 7 diyelim 3x kontrolü icin min
             for start_x in range(self.width_x - 2):
 
                 # yatay bağlantılar
