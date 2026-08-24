@@ -1,8 +1,15 @@
-def validate_config(config: dict[str, int | str | bool | tuple[int, int]]) -> None:
-    required_keys = {"WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"}
+def validate_config(config: dict[str, int | str |
+                    bool | tuple[int, int]]) -> None:
+    required_keys = {"WIDTH", "HEIGHT", "ENTRY",
+                     "EXIT", "OUTPUT_FILE", "PERFECT"}
 
-    for key in required_keys:# gerekli anahtarları gez
-        if key not in config.keys():# her birini config içinde var mı diye kontrol et
+    assert isinstance(config["WIDTH"], int)
+    assert isinstance(config["HEIGHT"], int)
+    assert isinstance(config["ENTRY"], tuple)
+    assert isinstance(config["EXIT"], tuple)
+
+    for key in required_keys:
+        if key not in config.keys():
             raise ValueError(f"Missing required key: '{key}'")
 
     if not config["WIDTH"] > 0:
@@ -17,7 +24,8 @@ def validate_config(config: dict[str, int | str | bool | tuple[int, int]]) -> No
     entry_x, entry_y = config["ENTRY"]
     exit_x, exit_y = config["EXIT"]
 
-    if not (0 <= entry_x < config["WIDTH"] and 0 <= entry_y < config["HEIGHT"]):
+    if not (0 <= entry_x < config["WIDTH"] and
+            0 <= entry_y < config["HEIGHT"]):
         raise ValueError(f"{config['ENTRY']} is outside the maze bounds")
 
     if not (0 <= exit_x < config["WIDTH"] and 0 <= exit_y < config["HEIGHT"]):

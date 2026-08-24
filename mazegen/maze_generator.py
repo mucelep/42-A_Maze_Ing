@@ -55,7 +55,7 @@ class MazeGenerator:
 
         return grid
 
-    def _generate_maze(self):
+    def _generate_maze(self) -> None:
         start_x, start_y = self.entry_pos
         visited: set[tuple[int, int]] = set()
         stack:   list[tuple[int, int]]
@@ -135,7 +135,7 @@ class MazeGenerator:
             current_cell.west = True
             neighbor_cell.east = True
 
-    def _perfect_false(self):
+    def _perfect_false(self) -> None:
         closed = self._get_closed_neighbors()
         random.shuffle(closed)
 
@@ -185,7 +185,7 @@ class MazeGenerator:
 
         return closed
 
-    def _FBI_open_the_corner(self):
+    def _FBI_open_the_corner(self) -> None:
         if self.width_x > 1:
             self._remove_wall(0, 0, 1, 0, "E")
             self._remove_wall(0, 0, 0, 1, "S")
@@ -236,7 +236,7 @@ class MazeGenerator:
         start_x = center_x - pattern_width // 2
         start_y = center_y - pattern_height // 2
 
-        locked_cells = set()
+        locked_cells: set[tuple[int, int]] = set()
 
         if pattern_width > self.width_x or pattern_height > self.height_y:
             print("Maze is too small to fit the '42' pattern")
@@ -260,7 +260,7 @@ class MazeGenerator:
         self._remove_wall(center_x, center_y, center_x, center_y + 1, "S")
         self._remove_wall(center_x, center_y, center_x, center_y - 1, "N")
 
-    def _has_open_3x3(self, x, y) -> bool:
+    def _has_open_3x3(self, x: int, y: int) -> bool:
 
         x_starts = (x - 2, x - 1, x)
         y_starts = (y - 2, y - 1, y)

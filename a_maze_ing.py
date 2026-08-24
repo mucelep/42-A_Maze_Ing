@@ -7,11 +7,22 @@ from process_config import read_config_file, validate_config
 from visualizer import run_menu
 
 
-def build_maze(config: dict) -> MazeGenerator:
+def build_maze(
+        config: dict[str, int | str | bool | tuple[int, int]]
+        ) -> MazeGenerator:
+
+    assert isinstance(config["WIDTH"], int)
+    assert isinstance(config["HEIGHT"], int)
+    assert isinstance(config["PERFECT"], bool)
+    assert isinstance(config["ENTRY"], tuple)
+    assert isinstance(config["EXIT"], tuple)
+    seed = config.get("SEED")
+    assert isinstance(seed, None | int)
+
     return MazeGenerator(
         config["WIDTH"], config["HEIGHT"],
         config["ENTRY"], config["EXIT"],
-        config["PERFECT"], config.get("SEED"),
+        config["PERFECT"], seed,
     )
 
 
@@ -29,6 +40,7 @@ def main() -> None:
         sys.exit(1)
 
     try:
+        assert isinstance(config["OUTPUT_FILE"], str)
         path: str = maze_slover(maze)
         output_maze(maze, config["OUTPUT_FILE"], path)
     except (ValueError, OSError) as e:
