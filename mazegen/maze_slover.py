@@ -59,3 +59,4 @@ def is_wall(x: int, y: int, dir: str,maze: MazeGenerator) -> bool:
             return cell.south
         if dir == "W":
             return cell.west
+        raise ValueError(f"Unknown direction: '{dir}'")
