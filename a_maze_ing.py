@@ -46,6 +46,23 @@ from process_config import read_config_file
 from process_config import validate_config
 from mazegen import MazeGenerator, maze_slover
 import sys
+from visualizer import run_menu
+
+#!/usr/bin/env python3
+import sys
+
+from output import output_maze
+from process_config import read_config_file, validate_config
+from mazegen import MazeGenerator, maze_slover
+from visualizer import run_menu
+
+
+def build_maze(config: dict) -> MazeGenerator:
+    return MazeGenerator(
+        config["WIDTH"], config["HEIGHT"],
+        config["ENTRY"], config["EXIT"],
+        config["PERFECT"], config.get("SEED"),
+    )
 
 
 def main() -> None:
@@ -56,22 +73,26 @@ def main() -> None:
     try:
         config = read_config_file(sys.argv[1])
         validate_config(config)
-
-        maze = MazeGenerator(
-        config["WIDTH"], config["HEIGHT"],
-        config["ENTRY"], config["EXIT"],
-        config["PERFECT"], config["SEED"]
-        )
-
-        path: str = maze_slover(maze)
-        output_maze(maze, config["OUTPUT_FILE"], path)
-
-        
+        maze = build_maze(config)
     except (ValueError, FileNotFoundError) as e:
         print(f"[ERROR] - {e}")
         sys.exit(1)
 
-    
+    try:
+        path: str = maze_slover(maze)
+        output_maze(maze, config["OUTPUT_FILE"], path)
+    except (ValueError, OSError) as e:
+        print(f"[ERROR] Could not write output file - {e}")
+        sys.exit(1)
+
+    try:
+        run_menu(build_maze, config)
+    except ValueError as e:
+        print(f"[ERROR] Could not generate maze: {e}")
+    except (EOFError, KeyboardInterrupt):
+        print("\nBye!")
+
+
 if __name__ == "__main__":
     main()
 
