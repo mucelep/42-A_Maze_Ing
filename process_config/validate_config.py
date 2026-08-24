@@ -21,4 +21,4 @@ def validate_config(config: dict[str, int | str | bool | tuple[int, int]]) -> No
         raise ValueError(f"{config['ENTRY']} is outside the maze bounds")
 
     if not (0 <= exit_x < config["WIDTH"] and 0 <= exit_y < config["HEIGHT"]):
-         raise ValueError(f"EXIT {config['EXIT']} is outside the maze bounds")
+        raise ValueError(f"EXIT {config['EXIT']} is outside the maze bounds")
