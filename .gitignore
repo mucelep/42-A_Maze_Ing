@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+.coverage
+*.whl
+*.tar.gz
+!/mazegen-*.whl
+!/mazegen-*.tar.gz
+.DS_Store
+/maze.txt
