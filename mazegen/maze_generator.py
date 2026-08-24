@@ -155,9 +155,7 @@ class MazeGenerator:
             )
 
         self._FBI_open_the_corner()
-        if self.locked_cells:
-            self._open_42_corridor()
-
+        self._open_center()
         self._braid_dead_ends()
 
     def _get_closed_neighbors(self) -> list[tuple[int, int, int, int, str]]:
@@ -248,13 +246,15 @@ class MazeGenerator:
         
         return locked_cells
 
-    def _open_42_corridor(self):
-        center_x = self.width_x // 2 # merkezi hesapliyor 10/2=5
-        patern_height = 5
-        start_y = (self.height_y - patern_height) // 2 # baslasngıc hesaplıyor 15-5 /2 = 5
 
-        for y in range(start_y - 1, start_y + 6):
-            self._remove_wall(center_x, y + 1, center_x, y, "N")
+    def _open_center(self) -> None:
+        center_x = self.width_x // 2
+        center_y = self.height_y // 2
+
+        self._remove_wall(center_x, center_y, center_x, center_y + 1, "S")
+        self._remove_wall(center_x, center_y, center_x, center_y - 1, "N")
+
+
 
     def _has_open_3x3(self, x, y) -> bool:
 
@@ -269,17 +269,26 @@ class MazeGenerator:
                     continue
                 if start_y < 0 or start_y + 2 >= self.height_y:
                     continue
-
+                # EAST: 3 satır × 2 iç bağlantı
                 for row in range(start_y, start_y + 3):
-                    for col in range(start_x, start_x + 3):
+                    for col in range(start_x, start_x + 2):
                         if self.grid[row][col].east:
                             is_open = False
                             break
+                    if not is_open:
+                        break
+                if not is_open:
+                    continue
+
+                # SOUTH: 2 iç bağlantı satırı × 3 sütun
+                for row in range(start_y, start_y + 2):
+                    for col in range(start_x, start_x + 3):
                         if self.grid[row][col].south:
                             is_open = False
                             break
                     if not is_open:
                         break
+
 
                 if is_open:
                     return True
@@ -336,7 +345,7 @@ class MazeGenerator:
                 for new_x, new_y, direction in candidates:
                     self._remove_wall(x, y, new_x, new_y, direction)
 
-                    if self._has_open_3x3():
+                    if self._has_open_3x3(x,y):
                         self._add_wall(x, y, new_x, new_y, direction)
                         continue
 
