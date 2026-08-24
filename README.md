@@ -272,11 +272,20 @@ The generator allows users to:
 - Access the generated cell grid directly
 - Get the shortest solution path and the hexadecimal encoding via helper functions
 
-The reusable module is packaged as:
+The reusable module is packaged as `mazegen-1.0.0-py3-none-any.whl` (and the
+equivalent `mazegen-1.0.0.tar.gz` sdist), both at the repository root.
 
-    mazegen-[VERSION]-py3-none-any.whl
+The package is built from `pyproject.toml` at the repository root, which only
+declares the `mazegen/` directory — the CLI, config parser and visualizer are
+not part of it. To rebuild it from source:
 
-The repository contains everything required to rebuild the package.
+    pip install build
+    python3 -m build
+    cp dist/mazegen-1.0.0-py3-none-any.whl dist/mazegen-1.0.0.tar.gz .
+
+To install and use it in another project:
+
+    pip install mazegen-1.0.0-py3-none-any.whl
 
 ## Project Structure
 
@@ -289,9 +298,13 @@ The repository contains everything required to rebuild the package.
     ├── README.md
     ├── LICENSE.md
     ├── .gitignore
-    ├── pyproject.toml
+    ├── pyproject.toml           # build config for the mazegen package
+    ├── mazegen-1.0.0-py3-none-any.whl  # built package (see Reusable Maze Generator)
+    ├── mazegen-1.0.0.tar.gz            # built package (sdist)
     ├── mazegen/                # reusable, standalone package
     │   ├── __init__.py
+    │   ├── README.md            # package usage docs (embedded in the wheel's metadata)
+    │   ├── py.typed             # PEP 561 marker: mazegen ships inline type hints
     │   ├── cell.py              # Cell dataclass (north/east/south/west walls)
     │   ├── maze_generator.py    # MazeGenerator class (recursive backtracker + braiding)
     │   ├── maze_slover.py       # maze_slover(): BFS shortest path
