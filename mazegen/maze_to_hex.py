@@ -7,17 +7,16 @@ def maze_to_hex(maze: MazeGenerator) -> list[str]:
     output: str = ""
     for y in range(maze.height_y):
         for x in range(maze.width_x):
-            hex_maze: str = ""
             value = 0
             cell = grid[y][x]
 
-            if not cell.west:
+            if cell.west:
                 value |= 1 << 3
-            if not cell.south:
+            if cell.south:
                 value |= 1 << 2
-            if not cell.east:
+            if cell.east:
                 value |= 1 << 1
-            if not cell.north:
+            if cell.north:
                 value |= 1 << 0
 
             output += (format(value, "x"))
