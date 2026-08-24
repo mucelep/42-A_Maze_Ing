@@ -336,7 +336,7 @@ class MazeGenerator:
                 for new_x, new_y, direction in candidates:
                     self._remove_wall(x, y, new_x, new_y, direction)
 
-                    if self._has_open_3x3():
+                    if self._has_open_3x3(x,y):
                         self._add_wall(x, y, new_x, new_y, direction)
                         continue
 
