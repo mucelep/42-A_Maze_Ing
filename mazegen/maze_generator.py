@@ -254,8 +254,6 @@ class MazeGenerator:
         self._remove_wall(center_x, center_y, center_x, center_y + 1, "S")
         self._remove_wall(center_x, center_y, center_x, center_y - 1, "N")
 
-
-
     def _has_open_3x3(self, x, y) -> bool:
 
         x_starts = (x-2,x-1,x)
