@@ -92,8 +92,9 @@ def render_maze(
 def run_menu(
     build_maze: Callable[[ConfigDict], MazeGenerator],
     config: ConfigDict,
+    initial_maze: MazeGenerator | None = None,
 ) -> None:
-    gen = build_maze(config)
+    gen = initial_maze if initial_maze is not None else build_maze(config)
     show_path = False
     wall_idx = 0
 

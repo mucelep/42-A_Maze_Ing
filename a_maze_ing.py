@@ -36,7 +36,7 @@ def main() -> None:
         sys.exit(1)
 
     try:
-        run_menu(build_maze, config)
+        run_menu(build_maze, config, maze)
     except ValueError as e:
         print(f"[ERROR] Could not generate maze: {e}")
     except (EOFError, KeyboardInterrupt):

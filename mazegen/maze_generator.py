@@ -11,7 +11,7 @@ class MazeGenerator:
         }
 
     def __init__(self, width: int, height: int,
-                 entry_pos: tuple[int, int],
+                 entry_pos: tuple[int, int] = (0, 0),
                  exit_pos: tuple[int, int] | None = None,
                  perfect: bool = True, seed: int | None = None):
 
@@ -19,7 +19,10 @@ class MazeGenerator:
         self.height_y = height
         self.seed = seed
         self.entry_pos = entry_pos
-        self.exit_pos = exit_pos
+        if exit_pos is not None:
+            self.exit_pos = exit_pos
+        else:
+            self.exit_pos = (width - 1, height - 1)
 
         if seed is not None:
             random.seed(seed)
