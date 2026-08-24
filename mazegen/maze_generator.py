@@ -158,6 +158,8 @@ class MazeGenerator:
         if self.locked_cells:
             self._open_42_corridor()
 
+        self._braid_dead_ends()
+
     def _get_closed_neighbors(self) -> list[tuple[int, int, int, int, str]]:
 
         closed : list[tuple[int, int, int, int, str]] = []
@@ -275,3 +277,64 @@ class MazeGenerator:
                     return True
 
         return False
+
+    _WALL_ATTR = {"N": "north", "E": "east", "S": "south", "W": "west"}
+
+    def _degree(self, x: int, y: int) -> int:
+        cell = self.grid[y][x]
+        return sum(
+            not getattr(cell, attr) for attr in self._WALL_ATTR.values()
+        )
+
+    def _get_dead_ends(self) -> list[tuple[int, int]]:
+        return [
+            (x, y)
+            for y in range(self.height_y)
+            for x in range(self.width_x)
+            if (x, y) not in self.locked_cells and self._degree(x, y) == 1
+        ]
+
+    def _braid_dead_ends(
+        self, max_remaining: int = 2, max_passes: int = 10
+    ) -> None:
+        for _ in range(max_passes):
+            dead_ends = self._get_dead_ends()
+            if len(dead_ends) <= max_remaining:
+                return
+
+            random.shuffle(dead_ends)
+            progress = False
+
+            for x, y in dead_ends:
+                candidates: list[tuple[int, int, str]] = []
+                for direction, (dx, dy) in self._DIRECTIONS.items():
+                    new_x, new_y = x + dx, y + dy
+
+                    in_bounds = (
+                        0 <= new_x < self.width_x
+                        and 0 <= new_y < self.height_y
+                    )
+                    if not in_bounds:
+                        continue
+                    if (new_x, new_y) in self.locked_cells:
+                        continue
+                    wall_attr = self._WALL_ATTR[direction]
+                    if not getattr(self.grid[y][x], wall_attr):
+                        continue  # already open, not the dead end's escape
+
+                    candidates.append((new_x, new_y, direction))
+
+                random.shuffle(candidates)
+
+                for new_x, new_y, direction in candidates:
+                    self._remove_wall(x, y, new_x, new_y, direction)
+
+                    if self._has_open_3x3():
+                        self._add_wall(x, y, new_x, new_y, direction)
+                        continue
+
+                    progress = True
+                    break
+
+            if not progress:
+                return
