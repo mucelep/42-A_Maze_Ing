@@ -143,7 +143,7 @@ class MazeGenerator:
             
             self._remove_wall(x, y, new_x, new_y, direction)
 
-            if self._has_open_3x3():# eger 3x3 gap olustuysa geri ekle
+            if self._has_open_3x3(x,y):# eger 3x3 gap olustuysa geri ekle
                 self._add_wall(x, y, new_x, new_y, direction)
             else:
                 success_count += 1
@@ -254,24 +254,31 @@ class MazeGenerator:
         for y in range(start_y - 1, start_y + 6):
             self._remove_wall(center_x, y + 1, center_x, y, "N")
 
-    def _has_open_3x3(self) -> bool:
-        for start_y in range(self.height_y - 2): #  genislik 7 diyelim 3x kontrolü icin min
-            for start_x in range(self.width_x - 2):
+    def _has_open_3x3(self, x, y) -> bool:
 
-                # yatay bağlantılar
-                all_open = True
+        x_starts = (x-2,x-1,x)
+        y_starts = (y-2,y-1,y)
+
+        for start_y in y_starts:
+            for start_x in x_starts:
+
+                is_open = True
+                if start_x < 0 or start_x + 2 >= self.width_x:
+                    continue
+                if start_y < 0 or start_y + 2 >= self.height_y:
+                    continue
+
                 for row in range(start_y, start_y + 3):
-                    for col in range(start_x, start_x + 2):
-                        if self.grid[row][col].east:
-                            all_open = False
-
-                # dikey bağlantılar
-                for row in range(start_y, start_y + 2):
                     for col in range(start_x, start_x + 3):
+                        if self.grid[row][col].east:
+                            is_open = False
+                            break
                         if self.grid[row][col].south:
-                            all_open = False
+                            is_open = False
+                            break
+                    if not is_open:
+                        break
 
-                if all_open:
+                if is_open:
                     return True
-
         return False
