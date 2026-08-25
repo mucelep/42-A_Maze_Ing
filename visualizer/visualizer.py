@@ -7,15 +7,15 @@ ConfigDict = dict[str, int | str | bool | tuple[int, int]]
 RESET = "\033[0m"
 
 WALL_COLORS = [
-    (235, 235, 238),  # white (default)
-    (255, 215, 0),    # gold
-    (100, 200, 255),  # sky blue
-    (150, 255, 150),  # mint green
+    (235, 235, 238),
+    (255, 215, 0),
+    (100, 200, 255),
+    (150, 255, 150),
 ]
-LOCKED_BG = (110, 113, 118)   # "42" pattern — always this gray, unaffected by rotation
-ENTRY_BG = (176, 58, 199)     # purple
-EXIT_BG = (214, 39, 42)       # red
-PATH_BG = (60, 140, 220)      # solution-path highlight (only shown when toggled on)
+LOCKED_BG = (110, 113, 118)
+ENTRY_BG = (176, 58, 199)
+EXIT_BG = (214, 39, 42)
+PATH_BG = (60, 140, 220)
 
 
 def bg(rgb: tuple[int, int, int]) -> str:
@@ -88,7 +88,6 @@ def render_maze(
             elif show_path and (px, py) in path:
                 line += bg(PATH_BG) + "  " + RESET
             else:
-                # colorless / transparent — no background code at all
                 line += "  "
         lines.append(line)
     return "\n".join(lines)
