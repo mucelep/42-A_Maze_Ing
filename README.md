@@ -25,7 +25,9 @@ used independently in another Python project.
 - Visual maze representation
 - Reusable `MazeGenerator` module
 
-## Installation
+## Instructions
+
+### Installation
 
 The project requires Python 3.10 or later.
 
@@ -40,7 +42,7 @@ Install the dependencies:
 
     make install
 
-## Usage
+### Usage
 
 Run the project with:
 
@@ -365,7 +367,16 @@ We used:
 - build (PyPA build) + hatchling
 - maze_analyzer.py
 
-## AI Usage
+## Resources
+
+- A-Maze-ing Project Subject (42 curriculum)
+- Python Documentation: https://docs.python.org/3/
+- Maze generation algorithms overview: https://en.wikipedia.org/wiki/Maze_generation_algorithm
+- Recursive backtracker walkthrough: https://weblog.jamisbuck.org/2010/12/27/maze-generation-recursive-backtracking
+- Breadth-first search: https://en.wikipedia.org/wiki/Breadth-first_search
+- Python Packaging User Guide (building the `mazegen` wheel): https://packaging.python.org/
+
+### AI Usage
 
 AI tools were used as a development and learning aid.
 
@@ -380,15 +391,6 @@ They were used for:
 - Making a better formatted and readable README file
 
 All generated suggestions were reviewed and tested by the team before being used.
-
-## Resources
-
-- A-Maze-ing Project Subject (42 curriculum)
-- Python Documentation: https://docs.python.org/3/
-- Maze generation algorithms overview: https://en.wikipedia.org/wiki/Maze_generation_algorithm
-- Recursive backtracker walkthrough: https://weblog.jamisbuck.org/2010/12/27/maze-generation-recursive-backtracking
-- Breadth-first search: https://en.wikipedia.org/wiki/Breadth-first_search
-- Python Packaging User Guide (building the `mazegen` wheel): https://packaging.python.org/
 
 ## License
 
