@@ -4,20 +4,27 @@ def validate_config(config: dict[str, int | str |
     required_keys = {"WIDTH", "HEIGHT", "ENTRY",
                      "EXIT", "OUTPUT_FILE", "PERFECT"}
 
+    for key in required_keys:
+        if key not in config.keys():
+            raise ValueError(f"Missing required key: '{key}'")
+
     assert isinstance(config["WIDTH"], int)
     assert isinstance(config["HEIGHT"], int)
     assert isinstance(config["ENTRY"], tuple)
     assert isinstance(config["EXIT"], tuple)
-
-    for key in required_keys:
-        if key not in config.keys():
-            raise ValueError(f"Missing required key: '{key}'")
+    assert isinstance(config["PERFECT"], bool)
 
     if not config["WIDTH"] > 0:
         raise ValueError("WIDTH must be greater than '0'")
 
     if not config["HEIGHT"] > 0:
         raise ValueError("HEIGHT must be greater than '0'")
+
+    if not config["PERFECT"] and config["HEIGHT"] < 3:
+        raise ValueError(
+            "HEIGHT must be at least 3 when PERFECT=False "
+            "(a Pac-Man-style board needs room to open the centre)"
+        )
 
     if config["ENTRY"] == config["EXIT"]:
         raise ValueError("ENTRY and EXIT cannot be equal")

@@ -15,7 +15,7 @@ class MazeGenerator:
                  entry_pos: tuple[int, int] = (0, 0),
                  exit_pos: tuple[int, int] | None = None,
                  perfect: bool = True, seed: int | None = None):
-
+        """Build and immediately generate a maze with the given parameters."""
         self.width_x = width
         self.height_y = height
         self.seed = seed
