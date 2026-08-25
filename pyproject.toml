@@ -9,8 +9,8 @@ description = "A maze generator library for the A-Maze-ing 42 project"
 license = { file = "LICENSE.md" }
 requires-python = ">=3.10"
 authors = [
-    { name = "Muhammed Ömer Celep" },
-    { name = "Batuhan Fatih Kumcu" },
+    { name = "mucelep" },
+    { name = "bakumcu" },
 ]
 dependencies = []
 
