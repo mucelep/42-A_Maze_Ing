@@ -293,7 +293,6 @@ To install and use it in another project:
     ├── a_maze_ing.py         # entry point, wires config -> generator -> output -> visualizer
     ├── config.txt             # default configuration file
     ├── output.py               # writes the hex grid + entry/exit/path to OUTPUT_FILE
-    ├── maze_analyzer.py        # provided analysis/validation script
     ├── Makefile
     ├── README.md
     ├── LICENSE.md
@@ -302,9 +301,7 @@ To install and use it in another project:
     ├── mazegen-1.0.0-py3-none-any.whl  # built package (see Reusable Maze Generator)
     ├── mazegen-1.0.0.tar.gz            # built package (sdist)
     ├── mazegen/                # reusable, standalone package
-    │   ├── __init__.py
-    │   ├── README.md            # package usage docs (embedded in the wheel's metadata)
-    │   ├── py.typed             # PEP 561 marker: mazegen ships inline type hints
+    │   ├── __init__.py          # package usage docs live in this module's docstring
     │   ├── cell.py              # Cell dataclass (north/east/south/west walls)
     │   ├── maze_generator.py    # MazeGenerator class (recursive backtracker + braiding)
     │   ├── maze_slover.py       # maze_slover(): BFS shortest path
@@ -317,12 +314,18 @@ To install and use it in another project:
         ├── __init__.py
         └── visualizer.py
 
+`maze_analyzer.py` (the 42-provided output checker used to verify the
+"42" pattern, wall coherence and the no-dead-end bonus) is not part of this
+repository -- it's supplied separately by the subject and run against
+`OUTPUT_FILE` after generation, e.g. `python3 maze_analyzer.py maze.txt
+--max-dead-ends 0`.
+
 ## Team & Project Management
 
 | Member | Role |
 |---|---|
-| Muhammed Ömer Celep (mucelep) | [Config parsing, validation & MazeGenerator, PERFECT/NON-PERFECT generation & maze solver, etc...] |
-| Batuhan Fatih Kumcu (bakumcu) | [Visualizer, readme, license, makefile, etc...] |
+| Muhammed Ömer Celep (mucelep) | Config parsing, validation & MazeGenerator, PERFECT/NON-PERFECT generation & maze solver, reusable package, etc... |
+| Batuhan Fatih Kumcu (bakumcu) | Visualizer, output generation, testing, readme, license, makefile |
 
 ### Planning
 
@@ -338,17 +341,17 @@ We initially divided the project into several parts:
 
 The work was divided between team members and integrated progressively.
 
-[TODO: Briefly explain how your actual plan evolved.]
+Firstly, grid generation and the algorithm for the maze was created. Afterwards, reading through the config file was implemented and later on we started working on a visualizer. After creating a basic sketch and understanding what needed to be done, we once again worked on generation and hex-encoding. After making sure everything was done we finished the visualizer and the interactive menu. We then started working on new checks to make sure every case worked well, and lastly we made the remaining files that were needed in this project.
 
 ### What Worked Well
 
-- [POINT]
-- [POINT]
+- The planning and sharing of different parts of the project, making a solid teamwork balance that fits well for both our calendars.
+- The development cycle of giving each other feedback on what to change/improve, and going back to those parts to make sure that everything was working well.
 
 ### What Could Be Improved
 
-- [POINT]
-- [POINT]
+- The communication between two members on what to do was, at times, too limiting and it definitely made the project progress slower than it should have.
+- Since this project is between two team members, when one person develops something it can cause something else to break. So when making commits and adding comments for other people to look at, we both needed to be more thorough in our explanations and clearer on what a given block of code meant, since it slowed progress when the code broke more than it should have and we had to fix it every time.
 
 ## Tools
 
@@ -356,10 +359,11 @@ We used:
 
 - Python 3.10+
 - Git
-- [IDE / EDITOR]
+- Vscode
 - flake8
 - mypy
-- [OTHER TOOLS]
+- build (PyPA build) + hatchling
+- maze_analyzer.py
 
 ## AI Usage
 
@@ -373,6 +377,7 @@ They were used for:
 - Suggesting test cases
 - Reviewing documentation
 - Explaining Python concepts
+- Making a better formatted and readable README file
 
 All generated suggestions were reviewed and tested by the team before being used.
 
