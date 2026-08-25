@@ -321,7 +321,7 @@ To install and use it in another project:
 
 | Member | Role |
 |---|---|
-| Muhammed Ömer Celep (mucelep) | [Config parsing & validation, MazeGenerator & PERFECT/NON-PERFECT  & maze solver, etc...] |
+| Muhammed Ömer Celep (mucelep) | [Config parsing, validation & MazeGenerator, PERFECT/NON-PERFECT generation & maze solver, etc...] |
 | Batuhan Fatih Kumcu (bakumcu) | [Visualizer, readme, license, makefile, etc...] |
 
 ### Planning
