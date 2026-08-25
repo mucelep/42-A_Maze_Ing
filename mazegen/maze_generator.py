@@ -25,6 +25,22 @@ class MazeGenerator:
         else:
             self.exit_pos = (width - 1, height - 1)
 
+        if width <= 0 or height <= 0:
+            raise ValueError(
+                f"width and height must be positive (got {width}x{height})"
+            )
+
+        for name, (x, y) in (
+            ("entry_pos", self.entry_pos), ("exit_pos", self.exit_pos)
+        ):
+            if not (0 <= x < width and 0 <= y < height):
+                raise ValueError(
+                    f"{name} {(x, y)} is outside the {width}x{height} maze"
+                )
+
+        if self.entry_pos == self.exit_pos:
+            raise ValueError("entry_pos and exit_pos cannot be equal")
+
         if seed is not None:
             random.seed(seed)
 

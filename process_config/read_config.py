@@ -17,7 +17,7 @@ def read_config_file(filename: str) -> dict[str, int | str
                     )
 
                 key, value = line.split("=")
-                key = key.strip()
+                key = key.strip().upper()
                 value = value.strip()
 
                 if key in config:
