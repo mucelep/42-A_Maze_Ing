@@ -168,7 +168,7 @@ class MazeGenerator:
 
         self._FBI_open_the_corner()
         self._open_center()
-        self._braid_dead_ends()
+        self._braid_dead_ends(max_remaining=0)
 
     def _get_closed_neighbors(self) -> list[tuple[int, int, int, int, str]]:
         """Return neighboring cell pairs separated by a wall."""
