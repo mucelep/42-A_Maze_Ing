@@ -2,6 +2,7 @@ from .maze_generator import MazeGenerator
 
 
 def maze_to_hex(maze: MazeGenerator) -> str:
+    """Convert the maze grid into its hexadecimal representation."""
     grid = maze.grid
 
     output: str = ""

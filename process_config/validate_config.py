@@ -1,5 +1,6 @@
 def validate_config(config: dict[str, int | str |
                     bool | tuple[int, int]]) -> None:
+    """Validate the maze configuration and raise errors for invalid values."""
     required_keys = {"WIDTH", "HEIGHT", "ENTRY",
                      "EXIT", "OUTPUT_FILE", "PERFECT"}
 

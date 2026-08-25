@@ -3,6 +3,7 @@ from .cell import Cell
 
 
 class MazeGenerator:
+    """Generate a maze using a randomized depth-first search algorithm."""
     _DIRECTIONS = {
             "N": (0, -1),
             "E": (1, 0),
@@ -43,6 +44,7 @@ class MazeGenerator:
             self._perfect_false()
 
     def _create_grid(self) -> list[list[Cell]]:
+        """Create and return a grid filled with Cell objects."""
         grid = []
 
         for y in range(self.height_y):
@@ -56,6 +58,7 @@ class MazeGenerator:
         return grid
 
     def _generate_maze(self) -> None:
+        """Generate the maze using depth-first search with backtracking."""
         start_x, start_y = self.entry_pos
         visited: set[tuple[int, int]] = set()
         stack:   list[tuple[int, int]]
@@ -79,7 +82,7 @@ class MazeGenerator:
     def _get_unvisited_neighbors(
         self, x: int, y: int, visited: set[tuple[int, int]]
             ) -> list[tuple[int, int, str]]:
-
+        """Return valid unvisited neighboring cells."""
         neighbors: list[tuple[int, int, str]] = []
 
         for direction, (dx, dy) in self._DIRECTIONS.items():
@@ -101,6 +104,7 @@ class MazeGenerator:
 
     def _remove_wall(self, x: int, y: int, new_x: int,
                      new_y: int, direction: str) -> None:
+        """Remove the wall between two adjacent cells."""
         current_cell: Cell = self.grid[y][x]
         neighbor_cell: Cell = self.grid[new_y][new_x]
 
@@ -119,6 +123,7 @@ class MazeGenerator:
 
     def _add_wall(self, x: int, y: int, new_x: int,
                   new_y: int, direction: str) -> None:
+        """Add a wall between two adjacent cells."""
         current_cell: Cell = self.grid[y][x]
         neighbor_cell: Cell = self.grid[new_y][new_x]
 
@@ -136,6 +141,7 @@ class MazeGenerator:
             neighbor_cell.east = True
 
     def _perfect_false(self) -> None:
+        """Add loops and open areas for a non-perfect maze."""
         closed = self._get_closed_neighbors()
         random.shuffle(closed)
 
@@ -165,7 +171,7 @@ class MazeGenerator:
         self._braid_dead_ends()
 
     def _get_closed_neighbors(self) -> list[tuple[int, int, int, int, str]]:
-
+        """Return neighboring cell pairs separated by a wall."""
         closed: list[tuple[int, int, int, int, str]] = []
 
         for y in range(self.height_y):
@@ -186,6 +192,7 @@ class MazeGenerator:
         return closed
 
     def _FBI_open_the_corner(self) -> None:
+        """Open passages around the four corners of the maze."""
         if self.width_x > 1:
             self._remove_wall(0, 0, 1, 0, "E")
             self._remove_wall(0, 0, 0, 1, "S")
@@ -219,6 +226,7 @@ class MazeGenerator:
             )
 
     def _compute_42_pattern(self) -> set[tuple[int, int]]:
+        """Calculate the cells occupied by the '42' pattern."""
         _DIGIT_4 = {
             (0, 0), (0, 1), (0, 2), (1, 2), (2, 2), (2, 3), (2, 4),
         }
@@ -254,6 +262,7 @@ class MazeGenerator:
         return locked_cells
 
     def _open_center(self) -> None:
+        """Open passages through the center of the maze."""
         center_x = self.width_x // 2
         center_y = self.height_y // 2
 
@@ -261,7 +270,7 @@ class MazeGenerator:
         self._remove_wall(center_x, center_y, center_x, center_y - 1, "N")
 
     def _has_open_3x3(self, x: int, y: int) -> bool:
-
+        """Check whether an open 3x3 area exists near a cell."""
         x_starts = (x - 2, x - 1, x)
         y_starts = (y - 2, y - 1, y)
 
@@ -299,12 +308,14 @@ class MazeGenerator:
     _WALL_ATTR = {"N": "north", "E": "east", "S": "south", "W": "west"}
 
     def _degree(self, x: int, y: int) -> int:
+        """Return the number of open passages connected to a cell."""
         cell = self.grid[y][x]
         return sum(
             not getattr(cell, attr) for attr in self._WALL_ATTR.values()
         )
 
     def _get_dead_ends(self) -> list[tuple[int, int]]:
+        """Return all non-locked cells that have only one open passage."""
         return [
             (x, y)
             for y in range(self.height_y)
@@ -315,6 +326,7 @@ class MazeGenerator:
     def _braid_dead_ends(
         self, max_remaining: int = 2, max_passes: int = 10
     ) -> None:
+        """Reduce dead ends by opening additional passages."""
         for _ in range(max_passes):
             dead_ends = self._get_dead_ends()
             if len(dead_ends) <= max_remaining:

@@ -2,6 +2,7 @@ from .maze_generator import MazeGenerator
 
 
 def maze_slover(maze: MazeGenerator) -> str:
+    """Find and return a path from the maze entry to the exit."""
     entry_pos = maze.entry_pos
     exit_pos = maze.exit_pos
 
@@ -47,6 +48,7 @@ def maze_slover(maze: MazeGenerator) -> str:
 
 
 def is_wall(x: int, y: int, dir: str, maze: MazeGenerator) -> bool:
+    """Check whether a wall exists in the given direction."""
     cell = maze.grid[y][x]
 
     if dir == "N":

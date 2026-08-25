@@ -1,5 +1,6 @@
 def read_config_file(filename: str) -> dict[str, int | str
                                             | bool | tuple[int, int]]:
+    """Read and parse the maze configuration file."""
     config = {}
 
     try:

@@ -10,7 +10,7 @@ from visualizer import run_menu
 def build_maze(
         config: dict[str, int | str | bool | tuple[int, int]]
         ) -> MazeGenerator:
-
+    """Build a MazeGenerator instance from the validated configuration."""
     assert isinstance(config["WIDTH"], int)
     assert isinstance(config["HEIGHT"], int)
     assert isinstance(config["PERFECT"], bool)
@@ -27,6 +27,7 @@ def build_maze(
 
 
 def main() -> None:
+    """Run the maze generator, save the result, and start the visualizer."""
     if len(sys.argv) != 2:
         print("[ERROR] Usage: python3 a_maze_ing.py <config_file>")
         sys.exit(1)

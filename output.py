@@ -3,6 +3,7 @@ from mazegen import maze_to_hex
 
 
 def output_maze(maze: MazeGenerator, file_name: str, path: str) -> None:
+    """Write the generated maze, entry, exit, and solution path to a file."""
     assert isinstance(maze.entry_pos, tuple)
     assert isinstance(maze.exit_pos, tuple)
 

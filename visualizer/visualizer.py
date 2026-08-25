@@ -19,10 +19,12 @@ PATH_BG = (60, 140, 220)      # solution-path highlight (only shown when toggled
 
 
 def bg(rgb: tuple[int, int, int]) -> str:
+    """Return an ANSI escape sequence for the given RGB background color."""
     return f"\033[48;2;{rgb[0]};{rgb[1]};{rgb[2]}m"
 
 
 def path_pixels(gen: MazeGenerator, path_str: str) -> set[tuple[int, int]]:
+    """Return the pixel coordinates corresponding to the maze solution path."""
     x, y = gen.entry_pos
     px, py = 2 * x + 1, 2 * y + 1
     pixels = {(px, py)}
@@ -35,6 +37,8 @@ def path_pixels(gen: MazeGenerator, path_str: str) -> set[tuple[int, int]]:
 
 
 def build_pixel_grid(gen: MazeGenerator) -> list[list[str]]:
+    """Build a pixel grid representing the maze walls,
+    cells, and special areas."""
     w, h = 2 * gen.width_x + 1, 2 * gen.height_y + 1
     pixels = [["wall"] * w for _ in range(h)]
 
@@ -64,6 +68,7 @@ def render_maze(
     show_path: bool = False,
     wall_color_idx: int = 0,
 ) -> str:
+    """Render the maze as a colored ANSI terminal string."""
     pixels = build_pixel_grid(gen)
     path = path_pixels(gen, maze_slover(gen)) if show_path else set()
     wall_bg = bg(WALL_COLORS[wall_color_idx])
@@ -94,6 +99,7 @@ def run_menu(
     config: ConfigDict,
     initial_maze: MazeGenerator | None = None,
 ) -> None:
+    """Run the interactive menu for generating and displaying mazes."""
     gen = initial_maze if initial_maze is not None else build_maze(config)
     show_path = False
     wall_idx = 0
