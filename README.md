@@ -359,7 +359,7 @@ We used:
 
 - Python 3.10+
 - Git
-- Vscode
+- VS code
 - flake8
 - mypy
 - build (PyPA build) + hatchling
